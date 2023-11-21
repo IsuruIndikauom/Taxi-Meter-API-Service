@@ -23,7 +23,6 @@ class UserManagementTest extends TestCase
                 $response->assertSee($value);
             }
         }
-
     }
     /**
      *\Checking password hash flow
