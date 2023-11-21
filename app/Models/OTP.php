@@ -9,4 +9,9 @@ class OTP extends Model {
     protected $table = 'otps';
     use HasFactory;
     protected $guarded = [];
+
+    public function response() {
+        return [ 'otp'=> $this->otp, 'mobile_number'=>$this->country_code.$this->mobile_number ] ;
+    }
 }
+
