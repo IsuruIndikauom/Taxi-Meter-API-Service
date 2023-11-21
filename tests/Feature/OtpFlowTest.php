@@ -6,6 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\OTP;
+use App\Models\User;
 
 class OtpFlowTest extends TestCase {
 
@@ -54,6 +55,7 @@ class OtpFlowTest extends TestCase {
         $this->withoutExceptionHandling();
         $response = $this->post( 'api/otps', $this->data() );
         $response = $this->post( 'api/otps/verify', $this->otp_data() );
+        $this->assertCount( 1, User::all() );
         $response->assertJson( [
             'message'=> 'OTP Verification',
             'data'=> [
