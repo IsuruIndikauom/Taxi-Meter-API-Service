@@ -32,7 +32,7 @@ class Controller extends BaseController {
         return Response::json( [ 'message' => $message, 'data' => $data, 'code' => self::NO_CONTENT ], self::NO_CONTENT );
     }
 
-    public function badRequest( $message = null, $data = null ) {
+    public function BAD_REQUEST( $message = null, $data = null ) {
         return Response::json( [ 'message' => $message, 'data' => $data, 'code' => self::BAD_REQUEST ], self::BAD_REQUEST );
     }
 

@@ -21,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::resource('users', UserController::class);
 Route::resource('otps', OTPController::class);
+Route::post('otps/verify',[OTPController::class, 'verify']);

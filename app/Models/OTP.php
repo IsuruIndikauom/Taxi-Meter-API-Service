@@ -11,7 +11,7 @@ class OTP extends Model {
     protected $guarded = [];
 
     public function response() {
-        return [ 'otp'=> $this->otp, 'mobile_number'=>$this->country_code.$this->mobile_number ] ;
+        return [ 'otp'=> $this->otp, 'mobile_number'=>$this->mobile_number ] ;
     }
 }
 

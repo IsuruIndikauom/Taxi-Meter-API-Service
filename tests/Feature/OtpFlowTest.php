@@ -18,13 +18,13 @@ class OtpFlowTest extends TestCase {
         $this->withoutExceptionHandling();
         $response = $this->post( 'api/otps', $this->data() );
         $this->assertCount( 1, OTP::all() );
-        $this->assertEquals( '+94717196590', OTP::first()->country_code.OTP::first()->mobile_number );
+        $this->assertEquals( '717196590', OTP::first()->mobile_number );
         $response->assertSee( OTP::first()->otp );
         $response->assertJson( [
             'message'=> 'OTP Created',
             'data'=> [
                 'otp'=> OTP::first()->otp,
-                'mobile_number'=> OTP::first()->country_code.OTP::first()->mobile_number
+                'mobile_number'=> OTP::first()->mobile_number
             ]
             ,
             'code'=> 200
@@ -36,13 +36,30 @@ class OtpFlowTest extends TestCase {
         $this->withoutExceptionHandling();
         $response = $this->post( 'api/otps', array_merge( $this->data(), [ 'mobile_number' => '717196590' ] ) );
         $this->assertCount( 1, OTP::all() );
-        $this->assertEquals( '+94717196590', OTP::first()->country_code.OTP::first()->mobile_number );
+        $this->assertEquals( '717196590', OTP::first()->mobile_number );
         $response->assertSee( OTP::first()->otp );
         $response->assertJson( [
             'message'=> 'OTP Created',
             'data'=> [
                 'otp'=> OTP::first()->otp,
-                'mobile_number'=> OTP::first()->country_code.OTP::first()->mobile_number
+                'mobile_number'=> OTP::first()->mobile_number
+            ]
+            ,
+            'code'=> 200
+        ] );
+
+    }
+
+    public function test_a_otp_can_be_verify() {
+        $this->withoutExceptionHandling();
+        $response = $this->post( 'api/otps', $this->data() );
+        $response = $this->post( 'api/otps/verify', $this->otp_data() );
+        $response->assertJson( [
+            'message'=> 'OTP Verification',
+            'data'=> [
+                'status'=> true,
+                'mobile_number'=> OTP::first()->mobile_number,
+                'access_token' =>'ss'
             ]
             ,
             'code'=> 200
@@ -56,4 +73,12 @@ class OtpFlowTest extends TestCase {
             'mobile_number' => '0717196590',
         ];
     }
+
+    public function otp_data() {
+        return [
+            'otp' => '0000',
+            'mobile_number' => '717196590',
+        ];
+    }
+
 }
