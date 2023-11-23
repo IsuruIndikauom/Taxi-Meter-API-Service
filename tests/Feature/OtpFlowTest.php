@@ -51,21 +51,42 @@ class OtpFlowTest extends TestCase {
 
     }
 
-    public function test_a_otp_can_be_verify() {
+    public function test_a_otp_can_be_verify_for_new_user() {
         $this->withoutExceptionHandling();
         $response = $this->post( 'api/otps', $this->data() );
         $response = $this->post( 'api/otps/verify', $this->otp_data() );
         $this->assertCount( 1, User::all() );
-        // $response->assertJson( [
-        //     'message'=> 'OTP Verification',
-        //     'data'=> [
-        //         'status'=> true,
-        //         'mobile_number'=> OTP::first()->mobile_number,
-        //         'access_token' =>'ss'
-        // ]
-        //     ,
-        //     'code'=> 200
-        // ] );
+        $response->assertJson( [
+            'message'=> 'OTP Verification',
+            'data'=> [
+                'token'=> \DB::table( 'personal_access_tokens' )->first()->token,
+                'new_user'=>true
+            ]
+            ,
+            'code'=> 200
+        ] );
+
+    }
+
+    public function test_a_otp_can_be_verify_for_exiting_user() {
+        $this->withoutExceptionHandling();
+
+        User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+        ] );
+        $response = $this->post( 'api/otps', $this->data() );
+        $response = $this->post( 'api/otps/verify', $this->otp_data() );
+        $this->assertCount( 1, User::all() );
+        $response->assertJson( [
+            'message'=> 'OTP Verification',
+            'data'=> [
+                'token'=> \DB::table( 'personal_access_tokens' )->first()->token,
+                'new_user'=>false
+            ]
+            ,
+            'code'=> 200
+        ] );
 
     }
 

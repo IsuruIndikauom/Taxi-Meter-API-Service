@@ -57,10 +57,11 @@ class User extends Authenticatable {
     }
 
     public function checkUserExistOrNot( $mobile_number ) {
-        if ( $this->mobile_number == $mobile_number ) {
-            return true;
+        $user = User::where( 'mobile_number', $mobile_number )->first();
+        if ( $user != null ) {
+            return $user ;
         } else {
-            return false;
+            return null;
         }
     }
 }
