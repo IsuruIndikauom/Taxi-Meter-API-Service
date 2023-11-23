@@ -4,14 +4,13 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserCreateRequest extends FormRequest {
+class VerifyOtpRequest extends FormRequest {
     /**
     * Determine if the user is authorized to make this request.
     */
 
     public function authorize(): bool {
         return true;
-        // made all request unauthorized
     }
 
     /**
@@ -22,9 +21,8 @@ class UserCreateRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'role_id' => 'required',
-            'mobile_number' => 'required',
+            'otp'=>'required',
+            'mobile_number'=>'required'
         ];
-
     }
 }
