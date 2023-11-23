@@ -67,7 +67,7 @@ class UserManagementTest extends TestCase {
         }
         $response = $this->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 2, 'mobile_number' => '0717196599', 'address' => '', 'email' => 'adminz@taxi.com', 'password' => bcrypt( 'password123' ) ] ) );
         $this->assertCount( 2, User::all() );
-        foreach ( array_merge( $this->data(), [ 'role_id' => 2, 'mobile_number' => '0717196599', 'address' => '', 'email' => 'adminz@taxi.com', 'password' => '' ] ) as $key => $value ) {
+        foreach ( array_merge( $this->data(), [ 'role_id' => 2, 'mobile_number' => '717196599', 'address' => '', 'email' => 'adminz@taxi.com', 'password' => '' ] ) as $key => $value ) {
             if ( $key != 'password' ) {
                 $response->assertSee( $value );
             }
@@ -78,15 +78,23 @@ class UserManagementTest extends TestCase {
         $response = $this->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 1, 'address' => '', 'email' => '', 'password' => bcrypt( 'password123' ) ] ) );
         $response->assertSessionHasErrors( 'email' );
 
-        $response = $this->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 2, 'mobile_number' => '0717196599', 'address' => '', 'email' => 'abc@taxi.com', 'password' => '' ] ) );
+        $response = $this->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 2, 'mobile_number' => '717196599', 'address' => '', 'email' => 'abc@taxi.com', 'password' => '' ] ) );
         $response->assertSessionHasErrors( 'password' );
 
+    }
+
+    public function test_leading_0_shoudl_remove_when_create_user(): void {
+        $this->withoutExceptionHandling();
+        $response = $this->post( 'api/users', array_merge( $this->data(), [ 'mobile_number' => '0717196590' ] ) );
+        $this->assertCount( 1, User::all() );
+        $this->assertEquals( '717196590', User::first()->mobile_number );
     }
 
     public function data() {
         return [
             'name' => '',
-            'mobile_number' => '0717196590',
+            'mobile_number' => '717196590',
+            'country_code'=>'+94',
             'address' => 'Kegalle',
             'role_id' => 1,
             'email' => 'isuruindikauom@gmail.com',

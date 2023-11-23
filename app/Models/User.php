@@ -23,6 +23,7 @@ class User extends Authenticatable {
         'mobile_number',
         'address',
         'role_id',
+        'country_code',
     ];
 
     /**
@@ -52,6 +53,7 @@ class User extends Authenticatable {
                 'password' => 'required',
             ] );
         }
+        $data->merge( [ 'mobile_number' => ltrim( $data->mobile_number, '0' ) ] );
         $user = $this->create( $data->all() );
         return $user;
     }
