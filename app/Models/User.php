@@ -6,7 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
@@ -23,6 +23,7 @@ class User extends Authenticatable {
         'mobile_number',
         'address',
         'role_id',
+        'country_code',
     ];
 
     /**
@@ -52,8 +53,14 @@ class User extends Authenticatable {
                 'password' => 'required',
             ] );
         }
+        $data->merge( [ 'mobile_number' => ltrim( $data->mobile_number, '0' ) ] );
         $user = $this->create( $data->all() );
         return $user;
+    }
+
+    public function updateUser( $data, $user ) {
+        $user->update( $data->all() );
+        return  $user;
     }
 
     public function checkUserExistOrNot( $mobile_number ) {
