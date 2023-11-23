@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UserCreateRequest extends FormRequest {
+class UserUpdateRequest extends FormRequest {
     /**
     * Get the validation rules that apply to the request.
     *
@@ -13,9 +13,7 @@ class UserCreateRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'role_id' => 'required',
-            'mobile_number' => 'required',
+            //
         ];
-
     }
 }

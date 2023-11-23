@@ -10,8 +10,14 @@ class OTP extends Model {
     use HasFactory;
     protected $guarded = [];
 
-    public function response() {
-        return [ 'otp'=> $this->otp, 'mobile_number'=>$this->mobile_number ] ;
+    public function createOTP( $data, $otp ) {
+        $data->merge( [ 'otp' => $otp ] );
+        $data->merge( [ 'mobile_number' => ltrim( $data->mobile_number, '0' ) ] );
+        $otp = $this->updateOrCreate(
+            [ 'mobile_number' => $data->mobile_number ], // Conditions for matching existing record
+            $data->all()  // Data to be updated or inserted
+        );
+        return [ 'otp'=> $otp->otp, 'mobile_number'=> $otp->mobile_number ];
     }
 }
 
