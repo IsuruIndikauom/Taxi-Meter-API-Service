@@ -61,7 +61,8 @@ class OtpFlowTest extends TestCase {
         $response->assertJson( [
             'message'=> 'OTP Verification',
             'data'=> [
-                'new_user'=>true
+                'new_user'=>true,
+                'user_id'=>User::first()->id
             ],
             'code'=> 200
         ] );

@@ -27,7 +27,7 @@ class OTPController extends Controller {
                 $request->merge( [ 'role_id' => 3 ] );
                 $user = $user->createUser( $request );
                 $token = $user->createToken( 'Taxi', [ '*' ],  $expiresAt )->accessToken;
-                return $this->success( 'OTP Verification', [ 'token'=>$token, 'new_user' => true ] );
+                return $this->success( 'OTP Verification', [ 'token'=>$token, 'new_user' => true, 'user_id'=>$user->id ] );
             }
         }
         return $this->badRequest( 'OTP Verification Failed', '' );
