@@ -5,6 +5,16 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Contracts\CreateOTP;
 use App\Services\DummyOTPService;
+use App\Contracts\CalculateDistance;
+use App\Services\ManualDistanceCalculator;
+use App\Contracts\CalculateSpeed;
+use App\Services\ManualSpeedCalculator;
+use App\Contracts\CalculateWatingTime;
+use App\Services\ManualTimeCalculator;
+use App\Contracts\CalculateDistanceTarrif;
+use App\Services\ManualCalculateDistanceTarrif;
+use App\Contracts\CalculateTotalTarrif;
+use App\Services\ManualCalculateTotalTarrif;
 
 class AppServiceProvider extends ServiceProvider {
     /**
