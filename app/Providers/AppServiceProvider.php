@@ -16,6 +16,8 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind( CalculateDistance::class, ManualDistanceCalculator::class );
         $this->app->bind( CalculateSpeed::class, ManualSpeedCalculator::class );
         $this->app->bind( CalculateWatingTime::class, ManualTimeCalculator::class );
+        $this->app->bind( CalculateDistanceTarrif::class, ManualCalculateDistanceTarrif::class );
+        $this->app->bind( CalculateTotalTarrif::class, ManualCalculateTotalTarrif::class );
     }
 
     /**
