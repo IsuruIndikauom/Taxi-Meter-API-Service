@@ -41,6 +41,23 @@ class Trip extends Model {
 
     }
 
+    public function tripInProgress( $data ) {
+        $tarrif = Tarrif::where( 'status', 1 )->first();
+
+        $data->merge( [
+            'last_update_time' => Carbon::now(),
+            'total_tarrif' => 0.00,
+            'distance_tarrif' => 0.00,
+            'waiting_tarrif' => 0.00,
+            'ride_distance' => 0.00,
+            'ride_speed' => 0.00,
+            'last_latitude' => $data->start_latitude,
+            'last_longitude' => $data->start_longitude,
+        ] );
+        $this->update( $data->all() );
+        return $this->tripResponse();
+    }
+
     public function tripResponse() {
         $data = [
             'id'=>$this->id,

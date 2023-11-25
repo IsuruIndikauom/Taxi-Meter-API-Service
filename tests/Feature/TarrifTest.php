@@ -18,7 +18,7 @@ class TarrifTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
-        //$this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
     }
 
     public function test_a_trip_can_be_started(): void {
@@ -56,6 +56,30 @@ class TarrifTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $response->assertStatus( 400 );
+
+    }
+
+    public function test_a_trip_can_be_updated_with_coordinate_to_calcute_distance(): void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $tarrif = Tarrif::factory()->create();
+        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->data() );
+        $this->assertCount( 1, Trip::all() );
+        $trip = Trip::first();
+        $response->assertJson( [
+            'message'=> 'Trip Started',
+            'data'=> [
+                'id'=>$trip->id,
+                'total_tarrif'=>$trip->total_tarrif,
+                'distance_tarrif'=>$trip->distance_tarrif,
+                'waiting_tarrif'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->waiting_tarrif,
+            ],
+            'code'=> 200
+        ] );
 
     }
 

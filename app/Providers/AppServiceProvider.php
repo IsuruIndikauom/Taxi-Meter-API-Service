@@ -13,6 +13,9 @@ class AppServiceProvider extends ServiceProvider {
 
     public function register(): void {
         $this->app->bind( CreateOTP::class, DummyOTPService::class );
+        $this->app->bind( CalculateDistance::class, ManualDistanceCalculator::class );
+        $this->app->bind( CalculateSpeed::class, ManualSpeedCalculator::class );
+        $this->app->bind( CalculateWatingTime::class, ManualTimeCalculator::class );
     }
 
     /**

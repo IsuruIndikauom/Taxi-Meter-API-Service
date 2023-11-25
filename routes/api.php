@@ -23,4 +23,5 @@ Route::post('otps/verify',[OTPController::class, 'verify']);
 Route::middleware('auth:api')->group(function () {
     Route::resource('users', UserController::class);
     Route::post('trips/start',[TripController::class, 'start']);
+    Route::post('trips/inprogress/{trip}',[TripController::class, 'inProgress']);
 });
