@@ -3,5 +3,5 @@
 namespace App\Contracts;
 
 interface CalculateSpeed {
-    function speed( $distace, $time );
+    function speedInKMPH( $time_difference, $distance );
 }

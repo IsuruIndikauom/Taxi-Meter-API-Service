@@ -36,6 +36,7 @@ class TripFactory extends Factory
             'waiting_tarrif' => 0.00,
             'ride_distance' => 0.00,
             'ride_speed' => 0.00,
+            'total_waiting_time'=>0
         ];
     }
 }

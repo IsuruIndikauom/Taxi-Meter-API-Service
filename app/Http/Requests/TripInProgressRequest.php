@@ -13,8 +13,8 @@ class TripInProgressRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            'start_latitude' => 'required|numeric',
-            'start_longitude' => 'required|numeric',
+            'current_latitude' => 'required|numeric',
+            'current_longitude' => 'required|numeric',
         ];
     }
 }

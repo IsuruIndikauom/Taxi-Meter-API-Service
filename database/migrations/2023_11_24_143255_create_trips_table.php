@@ -17,12 +17,12 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
             $table->dateTime('last_update_time');
-            $table->decimal('start_latitude', 10, 8);
-            $table->decimal('start_longitude', 10, 8);
-            $table->decimal('end_latitude', 10, 8)->nullable();
-            $table->decimal('end_longitude', 10, 8)->nullable();
-            $table->decimal('last_latitude', 10, 8);
-            $table->decimal('last_longitude', 10, 8);
+            $table->decimal('start_latitude', 18, 15);
+            $table->decimal('start_longitude', 18, 15);
+            $table->decimal('end_latitude', 18, 15)->nullable();
+            $table->decimal('end_longitude',18, 15)->nullable();
+            $table->decimal('last_latitude', 18, 15);
+            $table->decimal('last_longitude', 18, 15);
             $table->decimal('fix_rate', 10, 2);
             $table->decimal('rate_per_km', 10, 2);
             $table->decimal('rate_per_minute', 10, 2);
@@ -30,6 +30,7 @@ return new class extends Migration
             $table->decimal('distance_tarrif', 10, 2);
             $table->decimal('waiting_tarrif', 10, 2);
             $table->decimal('ride_distance', 10, 2);
+            $table->integer('total_waiting_time');
             $table->decimal('ride_speed', 10, 2);
             $table->boolean('status');
             $table->timestamps();

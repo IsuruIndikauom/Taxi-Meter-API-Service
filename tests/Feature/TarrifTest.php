@@ -37,7 +37,7 @@ class TarrifTest extends TestCase {
                 'total_tarrif'=>$trip->total_tarrif,
                 'distance_tarrif'=>$trip->distance_tarrif,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
             ],
             'code'=> 200
         ] );
@@ -66,7 +66,7 @@ class TarrifTest extends TestCase {
         ] );
         $tarrif = Tarrif::factory()->create();
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
-        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->inProgressData() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
         $response->assertJson( [
@@ -76,7 +76,7 @@ class TarrifTest extends TestCase {
                 'total_tarrif'=>$trip->total_tarrif,
                 'distance_tarrif'=>$trip->distance_tarrif,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
             ],
             'code'=> 200
         ] );
@@ -85,8 +85,22 @@ class TarrifTest extends TestCase {
 
     public function data() {
         return [
-            'start_latitude' => 80.3464,
-            'start_longitude'=> 7.2511,
+            'start_latitude' => 7.253142671147482,
+            'start_longitude'=> 80.34477474940532,
         ];
+    }
+
+    public function inProgressData() {
+        // return [
+        //     'current_latitude' => 7.253195529141866,
+        //     'current_longitude'=>  80.34525528285577,
+        // ];
+
+        // small distance
+        return [
+            'current_latitude' => 7.253140983852041,
+            'current_longitude'=>  80.34477382633004,
+        ];
+
     }
 }
