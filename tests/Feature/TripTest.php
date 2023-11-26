@@ -18,7 +18,7 @@ class TripTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
     }
 
     public function test_a_trip_can_be_started(): void {
@@ -30,16 +30,7 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip Started',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
+        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip Started' ] ) );
         $this->assertEquals( $user->active_trip_id, $trip->id );
     }
 
@@ -68,16 +59,7 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->inProgressData() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip In Progress',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
+        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
         //echo $trip->toJson( JSON_PRETTY_PRINT );
         //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
 
@@ -93,16 +75,7 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip Ended',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
+        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip Ended' ] ) );
         $this->assertEquals( $trip->status, 0 );
         $this->assertEquals( $user->active_trip_id, null );
     }
@@ -119,12 +92,24 @@ class TripTest extends TestCase {
             'current_latitude' => 7.253195529141866,
             'current_longitude'=>  80.34525528285577,
         ];
-
         // small distance
         // return [
         //     'current_latitude' => 7.253140983852041,
         //     'current_longitude'=>  80.34477382633004,
         // ];
+    }
 
+    public function outputData( $trip ) {
+        return [
+            'message'=> 'Trip Ended',
+            'data'=> [
+                'id'=>$trip->id,
+                'total_tarrif'=>$trip->total_tarrif,
+                'ride_distance'=>$trip->ride_distance,
+                'waiting_tarrif'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
+            ],
+            'code'=> 200
+        ];
     }
 }
