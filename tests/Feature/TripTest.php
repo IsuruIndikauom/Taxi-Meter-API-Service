@@ -88,7 +88,7 @@ class TripTest extends TestCase {
             'role_id' => 1,
             'id'=>1,
         ] );
-        $tarrif = Tariff::factory()->create();
+        Tariff::factory()->create();
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
         $this->assertCount( 1, Trip::all() );
