@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tarrifs', function (Blueprint $table) {
+        Schema::create('tariffs', function (Blueprint $table) {
             $table->id();
             $table->decimal('fix_rate', 10, 2);
             $table->decimal('rate_per_km', 10, 2);

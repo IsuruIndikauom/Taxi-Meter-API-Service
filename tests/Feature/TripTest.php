@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Trip;
-use App\Models\Tarrif;
+use App\Models\Tariff;
 
 class TripTest extends TestCase {
     /**
@@ -26,7 +26,7 @@ class TripTest extends TestCase {
             'role_id' => 3,
             'id'=>1,
         ] );
-        $tarrif = Tarrif::factory()->create();
+        $tarrif = Tariff::factory()->create();
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
@@ -63,7 +63,7 @@ class TripTest extends TestCase {
             'role_id' => 1,
             'id'=>1,
         ] );
-        $tarrif = Tarrif::factory()->create();
+        $tarrif = Tariff::factory()->create();
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->inProgressData() );
         $this->assertCount( 1, Trip::all() );
@@ -88,7 +88,7 @@ class TripTest extends TestCase {
             'role_id' => 1,
             'id'=>1,
         ] );
-        $tarrif = Tarrif::factory()->create();
+        $tarrif = Tariff::factory()->create();
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
         $this->assertCount( 1, Trip::all() );

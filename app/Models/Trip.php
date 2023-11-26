@@ -15,7 +15,7 @@ class Trip extends Model {
     ];
 
     public function startTrip( $data, $user ) {
-        $tarrif = Tarrif::where( 'status', 1 )->first();
+        $tarrif = Tariff::where( 'status', 1 )->first();
         $data->merge( [
             'user_id' => $user->id ,
             'start_time' => Carbon::now(),

@@ -11,10 +11,10 @@ use App\Contracts\CalculateSpeed;
 use App\Services\ManualSpeedCalculator;
 use App\Contracts\CalculateWaiting;
 use App\Services\ManualWaitingCalculator;
-use App\Contracts\CalculateDistanceTarrif;
-use App\Services\ManualCalculateDistanceTarrif;
-use App\Contracts\CalculateTotalTarrif;
-use App\Services\ManualCalculateTotalTarrif;
+use App\Contracts\CalculateDistanceTariff;
+use App\Services\ManualCalculateDistanceTariff;
+use App\Contracts\CalculateTotalTariff;
+use App\Services\ManualCalculateTotalTariff;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind( CalculateDistance::class, ManualDistanceCalculator::class );
         $this->app->bind( CalculateSpeed::class, ManualSpeedCalculator::class );
         $this->app->bind( CalculateWaiting::class, ManualWaitingCalculator::class );
-        $this->app->bind( CalculateDistanceTarrif::class, ManualCalculateDistanceTarrif::class );
-        $this->app->bind( CalculateTotalTarrif::class, ManualCalculateTotalTarrif::class );
+        $this->app->bind( CalculateDistanceTariff::class, ManualCalculateDistanceTariff::class );
+        $this->app->bind( CalculateTotalTariff::class, ManualCalculateTotalTariff::class );
     }
 
     /**

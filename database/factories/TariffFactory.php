@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Tarrif>
  */
-class TarrifFactory extends Factory
+class TariffFactory extends Factory
 {
     /**
      * Define the model's default state.
