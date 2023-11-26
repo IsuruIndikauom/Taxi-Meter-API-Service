@@ -15,11 +15,11 @@ use App\Contracts\CalculateTotalTarrif;
 
 class TripController extends Controller {
     public function start( TripStartRequest $request, Trip $trip ) {
-        $user_id = Auth::User()->id;
-        if ( $trip->tripExist( $user_id ) ) {
+        $user = Auth::User();
+        if ( $trip->tripExist( $user->id ) ) {
             return $this->badrequest( 'Trip exists for this user' );
         } else {
-            return $this->success( 'Trip Started', $trip->startTrip( $request, $user_id ) );
+            return $this->success( 'Trip Started', $trip->startTrip( $request, $user ) );
         }
     }
 
@@ -59,8 +59,9 @@ class TripController extends Controller {
         }
 
         public function end( Trip $trip ) {
+            $user = Auth::User();
             if ( $trip->exists() ) {
-                return $this->success( 'Trip Ended', $trip->end() );
+                return $this->success( 'Trip Ended', $trip->end( $user ) );
             } else {
                 return $this->badrequest( 'Trip does not exists' );
             }

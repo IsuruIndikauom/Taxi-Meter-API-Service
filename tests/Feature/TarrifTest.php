@@ -23,7 +23,7 @@ class TarrifTest extends TestCase {
 
     public function test_a_trip_can_be_started(): void {
         $user = User::factory()->create( [
-            'role_id' => 1,
+            'role_id' => 3,
             'id'=>1,
         ] );
         $tarrif = Tarrif::factory()->create();
@@ -40,7 +40,7 @@ class TarrifTest extends TestCase {
             ],
             'code'=> 200
         ] );
-
+        $this->assertEquals( $user->active_trip_id, $trip->id );
     }
 
     public function test_a_trip_can_be_started_if_only_no_existing_trip_for_same_user(): void {
@@ -104,6 +104,7 @@ class TarrifTest extends TestCase {
             'code'=> 200
         ] );
         $this->assertEquals( $trip->status, 0 );
+        $this->assertEquals( $user->active_trip_id, null );
     }
 
     public function data() {

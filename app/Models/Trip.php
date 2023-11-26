@@ -14,10 +14,10 @@ class Trip extends Model {
         'end_time' => 'datetime:Y-m-d H:i:s'
     ];
 
-    public function startTrip( $data, $user_id ) {
+    public function startTrip( $data, $user ) {
         $tarrif = Tarrif::where( 'status', 1 )->first();
         $data->merge( [
-            'user_id' => $user_id ,
+            'user_id' => $user->id ,
             'start_time' => Carbon::now(),
             'last_update_time' => Carbon::now(),
             'fix_rate' => $tarrif->fix_rate,
@@ -34,6 +34,7 @@ class Trip extends Model {
             'status' => 1
         ] );
         $trip = $this->create( $data->all() );
+        $user->update( [ 'active_trip_id' => $trip->id ] );
         return $trip->tripResponse();
     }
 
@@ -47,8 +48,9 @@ class Trip extends Model {
         return $this->tripResponse();
     }
 
-    public function end() {
+    public function end( $user ) {
         $this->update( [ 'status'=>0 ] );
+        $user->update( [ 'active_trip_id' => NULL ] );
         return $this->tripResponse();
     }
 
