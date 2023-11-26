@@ -26,6 +26,6 @@ class UserController extends Controller {
             return $this->success( 'Successfully logged out' );
         }
 
-        return $this->badrequest( 'No token found' );
+        return $this->badRequest( 'No token found' );
     }
 }

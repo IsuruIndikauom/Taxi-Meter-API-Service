@@ -17,7 +17,7 @@ class TripController extends Controller {
     public function start( TripStartRequest $request, Trip $trip ) {
         $user = Auth::User();
         if ( $trip->tripExist( $user->id ) ) {
-            return $this->badrequest( 'Trip exists for this user' );
+            return $this->badRequest( 'Trip exists for this user' );
         } else {
             return $this->success( 'Trip Started', $trip->startTrip( $request, $user ) );
         }
@@ -54,7 +54,7 @@ class TripController extends Controller {
                 $request->offsetUnset( 'current_longitude' );
                 return $this->success( 'Trip In Progress', $trip->tripInprogress( $request ) );
             } else {
-                return $this->badrequest( 'Trip does not exists' );
+                return $this->badRequest( 'Trip does not exists' );
             }
         }
 
@@ -63,7 +63,7 @@ class TripController extends Controller {
             if ( $trip->exists() ) {
                 return $this->success( 'Trip Ended', $trip->end( $user ) );
             } else {
-                return $this->badrequest( 'Trip does not exists' );
+                return $this->badRequest( 'Trip does not exists' );
             }
         }
 
