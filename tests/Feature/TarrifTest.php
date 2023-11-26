@@ -18,7 +18,7 @@ class TarrifTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
-        //$this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
     }
 
     public function test_a_trip_can_be_started(): void {
@@ -35,9 +35,8 @@ class TarrifTest extends TestCase {
             'data'=> [
                 'id'=>$trip->id,
                 'total_tarrif'=>$trip->total_tarrif,
-                'distance_tarrif'=>$trip->distance_tarrif,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
             ],
             'code'=> 200
         ] );
@@ -59,10 +58,72 @@ class TarrifTest extends TestCase {
 
     }
 
+    public function test_a_trip_can_be_updated_with_coordinate_to_calcute_distance(): void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $tarrif = Tarrif::factory()->create();
+        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->inProgressData() );
+        $this->assertCount( 1, Trip::all() );
+        $trip = Trip::first();
+        $response->assertJson( [
+            'message'=> 'Trip In Progress',
+            'data'=> [
+                'id'=>$trip->id,
+                'total_tarrif'=>$trip->total_tarrif,
+                'waiting_tarrif'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
+            ],
+            'code'=> 200
+        ] );
+        //echo $trip->toJson( JSON_PRETTY_PRINT );
+        //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
+
+    }
+
+    public function test_a_trip_can_be_ended(): void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $tarrif = Tarrif::factory()->create();
+        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
+        $this->assertCount( 1, Trip::all() );
+        $trip = Trip::first();
+        $response->assertJson( [
+            'message'=> 'Trip Ended',
+            'data'=> [
+                'id'=>$trip->id,
+                'total_tarrif'=>$trip->total_tarrif,
+                'waiting_tarrif'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
+            ],
+            'code'=> 200
+        ] );
+        $this->assertEquals( $trip->status, 0 );
+    }
+
     public function data() {
         return [
-            'start_latitude' => 80.3464,
-            'start_longitude'=> 7.2511,
+            'start_latitude' => 7.253142671147482,
+            'start_longitude'=> 80.34477474940532,
         ];
+    }
+
+    public function inProgressData() {
+        return [
+            'current_latitude' => 7.253195529141866,
+            'current_longitude'=>  80.34525528285577,
+        ];
+
+        // small distance
+        // return [
+        //     'current_latitude' => 7.253140983852041,
+        //     'current_longitude'=>  80.34477382633004,
+        // ];
+
     }
 }

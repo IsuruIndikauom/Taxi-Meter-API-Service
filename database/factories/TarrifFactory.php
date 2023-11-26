@@ -19,7 +19,7 @@ class TarrifFactory extends Factory
         return [
             'fix_rate' => $this->faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 100),
             'rate_per_km' => $this->faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 100),
-            'rate_per_minute' => $this->faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 1000),  
+            'rate_per_minute' => $this->faker->randomFloat($nbMaxDecimals = 2, $min = 0, $max = 100),  
             'status' => 1,
         ];
     }

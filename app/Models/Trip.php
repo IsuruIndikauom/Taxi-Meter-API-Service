@@ -26,6 +26,7 @@ class Trip extends Model {
             'total_tarrif' => 0.00,
             'distance_tarrif' => 0.00,
             'waiting_tarrif' => 0.00,
+            'total_waiting_time'=>0,
             'ride_distance' => 0.00,
             'ride_speed' => 0.00,
             'last_latitude' => $data->start_latitude,
@@ -41,15 +42,31 @@ class Trip extends Model {
 
     }
 
+    public function tripInProgress( $data ) {
+        $this->update( $data->all() );
+        return $this->tripResponse();
+    }
+
+    public function end() {
+        $this->update( [ 'status'=>0 ] );
+        return $this->tripResponse();
+    }
+
     public function tripResponse() {
         $data = [
             'id'=>$this->id,
             'total_tarrif'=>$this->total_tarrif,
-            'distance_tarrif'=>$this->distance_tarrif,
             'waiting_tarrif'=>$this->waiting_tarrif,
-            'ride_speed'=>$this->waiting_tarrif,
+            'ride_speed'=>$this->ride_speed,
         ];
         return $data;
+    }
+
+    public function timeDiffInSeconds() {
+        $current_time = Carbon::now();
+        $interval = $current_time->diff( $this->last_update_time );
+        $seconds = $interval->days * 24 * 60 * 60 + $interval->h * 60 * 60 + $interval->i * 60 + $interval->s;
+        return $seconds;
     }
 
 }
