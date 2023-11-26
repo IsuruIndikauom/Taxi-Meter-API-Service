@@ -58,6 +58,7 @@ class Trip extends Model {
         $data = [
             'id'=>$this->id,
             'total_tarrif'=>$this->total_tarrif,
+            'ride_distance'=>$this->ride_distance,
             'waiting_tarrif'=>$this->waiting_tarrif,
             'ride_speed'=>$this->ride_speed,
         ];
