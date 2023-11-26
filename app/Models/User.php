@@ -24,8 +24,8 @@ class User extends Authenticatable {
         'address',
         'role_id',
         'country_code',
+        'active_trip_id'
     ];
-
     /**
     * The attributes that should be hidden for serialization.
     *

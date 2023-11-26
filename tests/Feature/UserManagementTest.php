@@ -16,7 +16,7 @@ class UserManagementTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
-        //$this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
     }
 
     public function test_a_user_can_be_added_to_the_system(): void {
@@ -99,7 +99,6 @@ class UserManagementTest extends TestCase {
             'id'=>1
         ] );
         $response = $this->actingAs( $user )->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 1, 'address' => '', 'email' => '', 'password' => bcrypt( 'password123' ) ] ) );
-        //$response = $this->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 1, 'address' => '', 'email' => '', 'password' => bcrypt( 'password123' ) ] ) );
         $response->assertSessionHasErrors( 'email' );
 
         $response = $this->actingAs( $user )->post( 'api/users', array_merge( $this->data(), [ 'role_id' => 2, 'address' => '', 'email' => '', 'password' => bcrypt( 'password123' ) ] ) );
@@ -141,6 +140,42 @@ class UserManagementTest extends TestCase {
         $response = $this->actingAs( $user )->patch( 'api/users/'.$user->id, [ 'name'=>'Isuru' ] );
         $response->assertSee( 'Isuru' );
         $this->assertCount( 1, User::all() );
+    }
+
+    public function test_a_user_name_can_be_logged_out():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>''
+        ] );
+        $token = $user->createToken( 'TestToken' )->accessToken;
+        $response = $this->withHeaders( [ 'Authorization' => 'Bearer ' . $token ] )
+        ->post( '/api/logout' );
+
+        // $response = $this->actingAs( $user )->post( 'api/logout' );
+        $response->assertStatus( 200 );
+    }
+
+    public function test_a_user_name_cannot_be_logged_out_when_user_has_no_token():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>''
+        ] );
+        $response = $this->actingAs( $user )->post( 'api/logout' );
+        $response->assertStatus( 400 );
+    }
+
+    public function test_a_user_name_cannot_be_logged_out_without_valid_token():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>''
+        ] );
+        $this->withoutExceptionHandling();
+        $this->expectException( \Exception::class );
+        $response = $this->post( 'api/logout' );
+        $response->assertStatus( 401 );
     }
 
     public function data() {
