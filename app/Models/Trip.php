@@ -19,16 +19,15 @@ class Trip extends Model {
         $data->merge( [
             'user_id' => $user_id ,
             'start_time' => Carbon::now(),
-            'last_update_time' => Carbon::now()->subSeconds( 10 ), //Need to remove after testing
-            //  'last_update_time' => Carbon::now(), ->subSeconds( 10 ) ->subHours( 1 )
+            'last_update_time' => Carbon::now(),
             'fix_rate' => $tarrif->fix_rate,
             'rate_per_km' => $tarrif->rate_per_km,
             'rate_per_minute' => $tarrif->rate_per_minute,
             'total_tarrif' => 0.00,
             'distance_tarrif' => 0.00,
-            'waiting_tarrif' => 20.00,
-            'total_waiting_time'=>10,
-            'ride_distance' => 10.00,
+            'waiting_tarrif' => 0.00,
+            'total_waiting_time'=>0,
+            'ride_distance' => 0.00,
             'ride_speed' => 0.00,
             'last_latitude' => $data->start_latitude,
             'last_longitude' => $data->start_longitude,
@@ -44,19 +43,6 @@ class Trip extends Model {
     }
 
     public function tripInProgress( $data ) {
-        $data->merge( [
-            'last_update_time' => Carbon::now(),
-            'total_tarrif' => 0.00,
-            'distance_tarrif' => 0.00,
-            'waiting_tarrif' => 0.00,
-            'ride_distance' => 0.00,
-            'ride_speed' => 0.00,
-            'total_waiting_time'=>0,
-            'last_latitude' => $data->current_latitude,
-            'last_longitude' => $data->current_longitude,
-        ] );
-        $data->offsetUnset( 'current_latitude' );
-        $data->offsetUnset( 'current_longitude' );
         $this->update( $data->all() );
         return $this->tripResponse();
     }
@@ -65,9 +51,8 @@ class Trip extends Model {
         $data = [
             'id'=>$this->id,
             'total_tarrif'=>$this->total_tarrif,
-            'distance_tarrif'=>$this->distance_tarrif,
             'waiting_tarrif'=>$this->waiting_tarrif,
-            'ride_speed'=>$this->waiting_tarrif,
+            'ride_speed'=>$this->ride_speed,
         ];
         return $data;
     }

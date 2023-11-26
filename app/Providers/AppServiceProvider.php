@@ -9,8 +9,8 @@ use App\Contracts\CalculateDistance;
 use App\Services\ManualDistanceCalculator;
 use App\Contracts\CalculateSpeed;
 use App\Services\ManualSpeedCalculator;
-use App\Contracts\CalculateWatingTimeTarrif;
-use App\Services\ManualWaitingTimeTarrifCalculator;
+use App\Contracts\CalculateWaiting;
+use App\Services\ManualWaitingCalculator;
 use App\Contracts\CalculateDistanceTarrif;
 use App\Services\ManualCalculateDistanceTarrif;
 use App\Contracts\CalculateTotalTarrif;
@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->bind( CreateOTP::class, DummyOTPService::class );
         $this->app->bind( CalculateDistance::class, ManualDistanceCalculator::class );
         $this->app->bind( CalculateSpeed::class, ManualSpeedCalculator::class );
-        $this->app->bind( CalculateWatingTimeTarrif::class, ManualWaitingTimeTarrifCalculator::class );
+        $this->app->bind( CalculateWaiting::class, ManualWaitingCalculator::class );
         $this->app->bind( CalculateDistanceTarrif::class, ManualCalculateDistanceTarrif::class );
         $this->app->bind( CalculateTotalTarrif::class, ManualCalculateTotalTarrif::class );
     }

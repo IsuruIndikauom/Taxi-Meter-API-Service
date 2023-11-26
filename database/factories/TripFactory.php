@@ -38,5 +38,6 @@ class TripFactory extends Factory
             'ride_speed' => 0.00,
             'total_waiting_time'=>0
         ];
+         //  'last_update_time' => Carbon::now(), ->subSeconds( 10 ) ->subHours( 1 )
     }
 }

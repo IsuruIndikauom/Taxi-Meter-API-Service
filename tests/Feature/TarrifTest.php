@@ -35,7 +35,6 @@ class TarrifTest extends TestCase {
             'data'=> [
                 'id'=>$trip->id,
                 'total_tarrif'=>$trip->total_tarrif,
-                'distance_tarrif'=>$trip->distance_tarrif,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
                 'ride_speed'=>$trip->ride_speed,
             ],
@@ -70,16 +69,17 @@ class TarrifTest extends TestCase {
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
         $response->assertJson( [
-            'message'=> 'Trip Started',
+            'message'=> 'Trip In Progress',
             'data'=> [
                 'id'=>$trip->id,
                 'total_tarrif'=>$trip->total_tarrif,
-                'distance_tarrif'=>$trip->distance_tarrif,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
                 'ride_speed'=>$trip->ride_speed,
             ],
             'code'=> 200
         ] );
+        //echo $trip->toJson( JSON_PRETTY_PRINT );
+        //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
 
     }
 
@@ -91,16 +91,16 @@ class TarrifTest extends TestCase {
     }
 
     public function inProgressData() {
-        // return [
-        //     'current_latitude' => 7.253195529141866,
-        //     'current_longitude'=>  80.34525528285577,
-        // ];
+        return [
+            'current_latitude' => 7.253195529141866,
+            'current_longitude'=>  80.34525528285577,
+        ];
 
         // small distance
-        return [
-            'current_latitude' => 7.253140983852041,
-            'current_longitude'=>  80.34477382633004,
-        ];
+        // return [
+        //     'current_latitude' => 7.253140983852041,
+        //     'current_longitude'=>  80.34477382633004,
+        // ];
 
     }
 }
