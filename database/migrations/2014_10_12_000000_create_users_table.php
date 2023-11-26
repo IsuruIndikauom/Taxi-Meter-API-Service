@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->integer('role_id');
+            $table->integer('active_trip_id')->nullable();
             $table->string('mobile_number')->unique()->nullable();
             $table->string('country_code')->nullable();
             $table->string('email')->unique()->nullable();
