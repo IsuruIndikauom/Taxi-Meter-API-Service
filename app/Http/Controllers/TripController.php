@@ -10,8 +10,8 @@ use Carbon\Carbon;
 use App\Contracts\CalculateDistance;
 use App\Contracts\CalculateWaiting;
 use App\Contracts\CalculateSpeed;
-use App\Contracts\CalculateDistanceTarrif;
-use App\Contracts\CalculateTotalTarrif;
+use App\Contracts\CalculateDistanceTariff;
+use App\Contracts\CalculateTotalTariff;
 
 class TripController extends Controller {
     public function start( TripStartRequest $request, Trip $trip ) {
@@ -29,21 +29,21 @@ class TripController extends Controller {
         CalculateDistance $distance,
         CalculateWaiting $total_waiting,
         CalculateSpeed $speed,
-        CalculateDistanceTarrif $distance_tarrif,
-        CalculateTotalTarrif $total_tarrif ) {
+        CalculateDistanceTariff $distance_tariff,
+        CalculateTotalTariff $total_tariff ) {
             if ( $trip->exists() ) {
                 $distance = $distance->distanceInMetres( $trip->start_latitude, $trip->start_longitude,  $request->current_latitude, $request->current_longitude );
                 $total_waiting_time = $total_waiting->totalWaitingTime ( $trip->timeDiffInSeconds(), $trip->total_waiting_time, $distance );
-                $total_waiting_time_tarrif = $total_waiting->totalWaitingTimeTarrif ( $total_waiting_time, $trip->rate_per_minute );
+                $total_waiting_time_tariff = $total_waiting->totalWaitingTimeTariff ( $total_waiting_time, $trip->rate_per_minute );
                 $speed = $speed->speedInKMPH( $trip->timeDiffInSeconds(), $distance );
-                $distance_tarrif = $distance_tarrif->distanceTarrif ( $distance + $trip->ride_distance, $trip->rate_per_km );
-                $total_tarrif = $total_tarrif->total( $trip->fix_rate, $distance_tarrif, $total_waiting_time_tarrif );
+                $distance_tariff = $distance_tariff->distanceTariff ( $distance + $trip->ride_distance, $trip->rate_per_km );
+                $total_tariff = $total_tariff->total( $trip->fix_rate, $distance_tariff, $total_waiting_time_tariff );
 
                 $request->merge( [
                     'last_update_time' => Carbon::now(),
-                    'total_tarrif' => $total_tarrif,
-                    'distance_tarrif' => $distance_tarrif,
-                    'waiting_tarrif' => $total_waiting_time_tarrif ,
+                    'total_tarrif' => $total_tariff,
+                    'distance_tarrif' => $distance_tariff,
+                    'waiting_tarrif' => $total_waiting_time_tariff ,
                     'ride_distance' => $distance + $trip->ride_distance,
                     'ride_speed' => $speed ,
                     'total_waiting_time'=>$total_waiting_time,

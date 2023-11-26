@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Carbon\Carbon;
-use App\Models\Tarrif;
+use App\Models\Tariff;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Trip>
@@ -20,7 +20,7 @@ class TripFactory extends Factory
     {
         $start_latitude = $this->faker->latitude($min = -90, $max = 90);
         $start_longitude = $this->faker->latitude($min = -90, $max = 90);
-        $tarrif=Tarrif::factory()->create();
+        $tarrif=Tariff::factory()->create();
         return [
             'start_time' => Carbon::now(),
             'start_latitude' => $start_latitude,
