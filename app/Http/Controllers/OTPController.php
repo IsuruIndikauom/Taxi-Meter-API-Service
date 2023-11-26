@@ -20,7 +20,7 @@ class OTPController extends Controller {
             $exist_user = $user->checkUserExistOrNot( $request->mobile_number );
             if ( $exist_user !=  null ) {
                 $token = $exist_user->createToken( 'Taxi', [ '*' ],  $expiresAt )->accessToken;
-                return $this->success( 'OTP Verification', [ 'token'=>$token, 'new_user' => false ] );
+                return $this->success( 'OTP Verification', [ 'token'=>$token, 'new_user' => false, 'active_trip_id'=>$user->active_trip_id ] );
             } else {
                 $request->merge( [ 'role_id' => 3 ] );
                 $user = $user->createUser( $request );
