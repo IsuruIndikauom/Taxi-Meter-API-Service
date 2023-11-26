@@ -4,127 +4,53 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
-use App\Models\User;
-use App\Models\Trip;
 use App\Models\Tarrif;
+use App\Models\User;
+use Tests\TestCase;
 
 class TarrifTest extends TestCase {
-    /**
-    * A basic feature test example.
-    */
     use RefreshDatabase;
-
+    /**
+    * Test for user add
+    */
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
         $this->withoutExceptionHandling();
     }
 
-    public function test_a_trip_can_be_started(): void {
-        $user = User::factory()->create( [
-            'role_id' => 3,
-            'id'=>1,
-        ] );
-        $tarrif = Tarrif::factory()->create();
-        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
-        $this->assertCount( 1, Trip::all() );
-        $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip Started',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
-        $this->assertEquals( $user->active_trip_id, $trip->id );
-    }
-
-    public function test_a_trip_can_be_started_if_only_no_existing_trip_for_same_user(): void {
+    public function test_tarrif_can_be_added_to_system(): void {
         $user = User::factory()->create( [
             'role_id' => 1,
             'id'=>1,
         ] );
-        $trip = Trip::factory()->create( [
-            'user_id' => $user->id,
-            'status' =>1
-        ] );
-        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
-        $this->assertCount( 1, Trip::all() );
-        $response->assertStatus( 400 );
-
+        $response = $this->actingAs( $user )->post( 'api/tarrifs', $this->data() );
+        $this->assertCount( 1, Tarrif::all() );
+        foreach ( $this->data() as $key => $value ) {
+            $response->assertSee( $value );
+        }
     }
 
-    public function test_a_trip_can_be_updated_with_coordinate_to_calcute_distance(): void {
+    public function test_cannot_add_multiple_active_tarrif_only_one_can_be_active(): void {
         $user = User::factory()->create( [
             'role_id' => 1,
             'id'=>1,
         ] );
-        $tarrif = Tarrif::factory()->create();
-        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
-        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$response->getData()->data->id, $this->inProgressData() );
-        $this->assertCount( 1, Trip::all() );
-        $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip In Progress',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
-        //echo $trip->toJson( JSON_PRETTY_PRINT );
-        //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
-
-    }
-
-    public function test_a_trip_can_be_ended(): void {
-        $user = User::factory()->create( [
-            'role_id' => 1,
-            'id'=>1,
-        ] );
-        $tarrif = Tarrif::factory()->create();
-        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
-        $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
-        $this->assertCount( 1, Trip::all() );
-        $trip = Trip::first();
-        $response->assertJson( [
-            'message'=> 'Trip Ended',
-            'data'=> [
-                'id'=>$trip->id,
-                'total_tarrif'=>$trip->total_tarrif,
-                'waiting_tarrif'=>$trip->waiting_tarrif,
-                'ride_speed'=>$trip->ride_speed,
-            ],
-            'code'=> 200
-        ] );
-        $this->assertEquals( $trip->status, 0 );
-        $this->assertEquals( $user->active_trip_id, null );
+        $response = $this->actingAs( $user )->post( 'api/tarrifs', $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/tarrifs', $this->data() );
+        $this->assertCount( 2, Tarrif::all() );
+        $this->assertCount( 1, Tarrif::where( 'status', 1 )->get() );
+        foreach ( $this->data() as $key => $value ) {
+            $response->assertSee( $value );
+        }
     }
 
     public function data() {
         return [
-            'start_latitude' => 7.253142671147482,
-            'start_longitude'=> 80.34477474940532,
+            'fix_rate' => 100.00,
+            'rate_per_km' => 50.00,
+            'rate_per_minute' => 10.00,
+            'status' => 1,
         ];
-    }
-
-    public function inProgressData() {
-        return [
-            'current_latitude' => 7.253195529141866,
-            'current_longitude'=>  80.34525528285577,
-        ];
-
-        // small distance
-        // return [
-        //     'current_latitude' => 7.253140983852041,
-        //     'current_longitude'=>  80.34477382633004,
-        // ];
-
     }
 }

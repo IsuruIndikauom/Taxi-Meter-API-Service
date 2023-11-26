@@ -3,6 +3,7 @@
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OTPController;
 use App\Http\Controllers\TripController;
+use App\Http\Controllers\TarrifController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,7 @@ Route::resource('otps', OTPController::class);
 Route::post('otps/verify',[OTPController::class, 'verify']);
 Route::middleware('auth:api')->group(function () {
     Route::resource('users', UserController::class);
+    Route::resource('tarrifs',TarrifController::class);
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('trips/start',[TripController::class, 'start']);
     Route::post('trips/inprogress/{trip}',[TripController::class, 'inProgress']);
