@@ -83,6 +83,29 @@ class TarrifTest extends TestCase {
 
     }
 
+    public function test_a_trip_can_be_ended(): void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $tarrif = Tarrif::factory()->create();
+        $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
+        $response = $this->actingAs( $user )->post( 'api/trips/end/'.$response->getData()->data->id, $this->data() );
+        $this->assertCount( 1, Trip::all() );
+        $trip = Trip::first();
+        $response->assertJson( [
+            'message'=> 'Trip Ended',
+            'data'=> [
+                'id'=>$trip->id,
+                'total_tarrif'=>$trip->total_tarrif,
+                'waiting_tarrif'=>$trip->waiting_tarrif,
+                'ride_speed'=>$trip->ride_speed,
+            ],
+            'code'=> 200
+        ] );
+        $this->assertEquals( $trip->status, 0 );
+    }
+
     public function data() {
         return [
             'start_latitude' => 7.253142671147482,

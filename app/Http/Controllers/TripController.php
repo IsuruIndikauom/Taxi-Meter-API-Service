@@ -58,4 +58,12 @@ class TripController extends Controller {
             }
         }
 
+        public function end( Trip $trip ) {
+            if ( $trip->exists() ) {
+                return $this->success( 'Trip Ended', $trip->end() );
+            } else {
+                return $this->badrequest( 'Trip does not exists' );
+            }
+        }
+
     }

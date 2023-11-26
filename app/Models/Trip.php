@@ -47,6 +47,11 @@ class Trip extends Model {
         return $this->tripResponse();
     }
 
+    public function end() {
+        $this->update( [ 'status'=>0 ] );
+        return $this->tripResponse();
+    }
+
     public function tripResponse() {
         $data = [
             'id'=>$this->id,
