@@ -38,9 +38,13 @@ class Trip extends Model {
         return $trip->tripResponse();
     }
 
-    public function tripExist( $user_id ) {
-        return $this->where( 'user_id', $user_id )->exists();
+    public function tripExistforUser( $user_id ) {
+        return $this->where( 'user_id', $user_id )->where( 'status', 1 )->exists();
 
+    }
+
+    public function activeTripExists() {
+        return $this->where( 'status', 1 )->exists();
     }
 
     public function tripInProgress( $data ) {
