@@ -49,7 +49,7 @@ class Trip extends Model {
     }
 
     public function end( $user ) {
-        $this->update( [ 'status'=>0 ] );
+        $this->update( [ 'status'=>0, 'ride_speed'=>0.00 ] );
         $user->update( [ 'active_trip_id' => NULL ] );
         return $this->tripResponse();
     }
