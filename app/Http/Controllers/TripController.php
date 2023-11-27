@@ -32,7 +32,7 @@ class TripController extends Controller {
         CalculateDistanceTariff $distance_tariff,
         CalculateTotalTariff $total_tariff ) {
             if ( $trip->exists() ) {
-                $distance = $distance->distanceInMetres( $trip->start_latitude, $trip->start_longitude,  $request->current_latitude, $request->current_longitude );
+                $distance = $distance->distanceInMetres( $trip->last_latitude, $trip->last_longitude,  $request->current_latitude, $request->current_longitude );
                 $total_waiting_time = $total_waiting->totalWaitingTime ( $trip->timeDiffInSeconds(), $trip->total_waiting_time, $distance );
                 $total_waiting_time_tariff = $total_waiting->totalWaitingTimeTariff ( $total_waiting_time, $trip->rate_per_minute );
                 $speed = $speed->speedInKMPH( $trip->timeDiffInSeconds(), $distance );
@@ -44,7 +44,7 @@ class TripController extends Controller {
                     'total_tarrif' => $total_tariff,
                     'distance_tarrif' => $distance_tariff,
                     'waiting_tarrif' => $total_waiting_time_tariff ,
-                    'ride_distance' => $distance + $trip->ride_distance,
+                    'ride_distance' => number_format( ( $distance + $trip->ride_distance ), 2 ),
                     'ride_speed' => $speed ,
                     'total_waiting_time'=>$total_waiting_time,
                     'last_latitude' => $request->current_latitude,
