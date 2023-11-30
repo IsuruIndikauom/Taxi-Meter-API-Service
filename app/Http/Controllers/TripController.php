@@ -38,13 +38,12 @@ class TripController extends Controller {
                 $speed = $speed->speedInKMPH( $trip->timeDiffInSeconds(), $distance );
                 $distance_tariff = $distance_tariff->distanceTariff ( $distance + $trip->ride_distance, $trip->rate_per_km );
                 $total_tariff = $total_tariff->total( $trip->fix_rate, $distance_tariff, $total_waiting_time_tariff );
-
                 $request->merge( [
                     'last_update_time' => Carbon::now(),
                     'total_tarrif' => $total_tariff,
                     'distance_tarrif' => $distance_tariff,
                     'waiting_tarrif' => $total_waiting_time_tariff ,
-                    'ride_distance' => number_format( ( $distance + $trip->ride_distance ), 2 ),
+                    'ride_distance' => sprintf( '%.2f', round( ( $distance + $trip->ride_distance ), 2 ) ),
                     'ride_speed' => $speed ,
                     'total_waiting_time'=>$total_waiting_time,
                     'last_latitude' => $request->current_latitude,

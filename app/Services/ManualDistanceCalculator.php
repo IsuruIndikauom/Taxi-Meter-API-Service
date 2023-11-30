@@ -18,7 +18,7 @@ class ManualDistanceCalculator implements CalculateDistance {
 
         $c = 2 * atan2( sqrt( $a ), sqrt( 1 - $a ) );
 
-        return number_format( ( $earthRadius * $c), 2 );
+        return sprintf( '%.2f', round( ( $earthRadius * $c), 2 ) );
     }
     //Vincenty formula
     function calculateDistanceVincenty($lat1, $lon1, $lat2, $lon2) {
@@ -86,7 +86,7 @@ class ManualDistanceCalculator implements CalculateDistance {
         ( -3 + 4 * $cos2SigmaM * $cos2SigmaM ) ) );
         $distance = $b * $A * ( $sigma - $deltaSigma );
 
-        return number_format( $distance, 2 );
+        return sprintf( '%.2f', round( $distance, 2 ) );
     }
 
 }
