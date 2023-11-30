@@ -8,6 +8,7 @@ use Tests\TestCase;
 use App\Models\User;
 use App\Models\Trip;
 use App\Models\Tariff;
+use Carbon\Carbon;
 
 class TripTest extends TestCase {
     /**
@@ -18,7 +19,7 @@ class TripTest extends TestCase {
     protected function setUp(): void {
         parent::setUp();
         $this->artisan( 'passport:install' );
-        // $this->withoutExceptionHandling();
+        $this->withoutExceptionHandling();
     }
 
     public function test_a_trip_can_be_started(): void {
@@ -80,6 +81,26 @@ class TripTest extends TestCase {
         $this->assertEquals( $user->active_trip_id, null );
     }
 
+    public function test_a_trip_can_be_wait_for_few_hours() {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $trip = Trip::factory()->create( [
+            'last_update_time'=> Carbon::now()->subHours( 5 ),
+            'user_id'=>$user->id,
+            'status'=>1,
+            'last_latitude' => 7.253195529141866,
+            'last_longitude'=>  80.34525528285577,
+            'total_waiting_time'=>  500,
+            'ride_distance'=>  500.00,
+        ] );
+        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$trip->id, $this->inProgressData() );
+        $trip = Trip::first();
+        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
+
+    }
+
     public function data() {
         return [
             'start_latitude' => 7.253142671147482,
@@ -108,6 +129,8 @@ class TripTest extends TestCase {
                 'ride_distance'=>$trip->ride_distance,
                 'waiting_tarrif'=>$trip->waiting_tarrif,
                 'ride_speed'=>$trip->ride_speed,
+                'ride_speed'=>$trip->ride_speed,
+                'total_waiting_time'=>sprintf( '%.2f', round( $trip->total_waiting_time/60, 2 ) ),
             ],
             'code'=> 200
         ];

@@ -11,7 +11,8 @@ class Trip extends Model {
     protected $guarded = [];
     protected $casts = [
         'start_time' => 'datetime:Y-m-d H:i:s',
-        'end_time' => 'datetime:Y-m-d H:i:s'
+        'end_time' => 'datetime:Y-m-d H:i:s',
+        'last_update_time' => 'datetime:Y-m-d H:i:s'
     ];
 
     public function startTrip( $data, $user ) {
@@ -38,9 +39,13 @@ class Trip extends Model {
         return $trip->tripResponse();
     }
 
-    public function tripExist( $user_id ) {
-        return $this->where( 'user_id', $user_id )->exists();
+    public function tripExistforUser( $user_id ) {
+        return $this->where( 'user_id', $user_id )->where( 'status', 1 )->exists();
 
+    }
+
+    public function activeTripExists() {
+        return $this->where( 'status', 1 )->exists();
     }
 
     public function tripInProgress( $data ) {
@@ -61,6 +66,7 @@ class Trip extends Model {
             'ride_distance'=>$this->ride_distance,
             'waiting_tarrif'=>$this->waiting_tarrif,
             'ride_speed'=>$this->ride_speed,
+            'total_waiting_time'=>sprintf( '%.2f', round( $this->total_waiting_time/60, 2 ) ),
         ];
         return $data;
     }
