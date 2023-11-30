@@ -7,18 +7,17 @@ use Carbon\Carbon;
 class ManualWaitingCalculator implements CalculateWaiting {
     public  function totalWaitingTimeTariff ( $total_time, $rate_per_minute ) {
         if ( checkNonZeroValues( [ $total_time, $rate_per_minute ] ) ) {
-            return number_format( ( $rate_per_minute * $total_time / 60 ), 2 );
+            return sprintf( '%.2f', round( ( $rate_per_minute * $total_time / 60 ), 2 ) );
         } else {
-            return number_format( 0, 2 );
+            return sprintf( '%.2f', round( 0, 2 ) );
         }
-
     }
 
-    public  function totalWaitingTime ( $current_waiting_time, $total_waiting_time, $distance ) {
+    public  function totalWaitingTime ( $current_waiting_time, $total_waiting_time, $distance ):int {
         if ( $distance <= 0.5 ) {
-            return number_format( ( $current_waiting_time + $total_waiting_time ), 2 );
+            return $current_waiting_time+ $total_waiting_time;
         } else {
-            return number_format( $total_waiting_time, 2 );
+            return $total_waiting_time;
         }
     }
 }
