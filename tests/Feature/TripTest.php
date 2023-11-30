@@ -31,7 +31,18 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip Started' ] ) );
+        echo json_encode( $response->json(), JSON_PRETTY_PRINT );
+        $response->assertJson( array_merge( $this->outputData( $trip ), [
+            'message'=> 'Trip Started',
+            'data'=>[
+                'total_tarrif'=>'0.00',
+                'ride_distance'=>'0.00',
+                'waiting_tarrif'=> '0.00',
+                'ride_speed'=> '0.00',
+                'total_waiting_time'=> '0.00'
+            ]
+        ] ) );
+
         $this->assertEquals( $user->active_trip_id, $trip->id );
     }
 

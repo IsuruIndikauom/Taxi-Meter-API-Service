@@ -62,10 +62,10 @@ class Trip extends Model {
     public function tripResponse() {
         $data = [
             'id'=>$this->id,
-            'total_tarrif'=>$this->total_tarrif,
-            'ride_distance'=>$this->ride_distance,
-            'waiting_tarrif'=>$this->waiting_tarrif,
-            'ride_speed'=>$this->ride_speed,
+            'total_tarrif'=>sprintf( '%.2f', round( $this->total_tarrif, 2 ) ) ,
+            'ride_distance'=>sprintf( '%.2f', round( $this->ride_distance, 2 ) ) ,
+            'waiting_tarrif'=>sprintf( '%.2f', round( $this->waiting_tarrif, 2 ) ) ,
+            'ride_speed'=>sprintf( '%.2f', round( $this->ride_speed, 2 ) ),
             'total_waiting_time'=>sprintf( '%.2f', round( $this->total_waiting_time/60, 2 ) ),
         ];
         return $data;
