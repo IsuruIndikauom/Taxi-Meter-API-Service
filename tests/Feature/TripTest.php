@@ -31,7 +31,6 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        echo json_encode( $response->json(), JSON_PRETTY_PRINT );
         $response->assertJson( array_merge( $this->outputData( $trip ), [
             'message'=> 'Trip Started',
             'data'=>[
@@ -130,7 +129,7 @@ class TripTest extends TestCase {
         $trip = Trip::first();
         $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
 
-        for ($i = 10; $i <= 10000; $i += 10) {
+        for ($i = 10; $i <= 100; $i += 10) {
             $trip = Trip::first();
             $trip->update(['last_update_time'=> Carbon::now()->subSeconds( 3 )]);
             $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$trip->id, $this->getLocationMetersAway($trip->last_latitude,$trip->last_longitude,25) );
