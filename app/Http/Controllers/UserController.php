@@ -9,6 +9,10 @@ Use Auth;
 
 class UserController extends Controller {
 
+    public function index() {
+        return $this->success( 'All users', User::all() );
+    }
+
     public function store( UserCreateRequest $request, User $user ) {
         $user = $user->createUser( $request );
         return $this->success( 'User created', $user );
@@ -17,6 +21,15 @@ class UserController extends Controller {
     public function update( UserUpdateRequest $request, User $user ) {
         $user = $user->updateUser( $request, $user );
         return $this->success( 'User updated', $user );
+    }
+
+    public function show( User $user ) {
+        return $this->success( 'User details', $user );
+    }
+
+    public function destroy( User $user ) {
+        $user->delete();
+        return $this->success( 'User deleted' );
     }
 
     public function logout() {
