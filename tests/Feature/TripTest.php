@@ -31,7 +31,18 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/start', $this->data() );
         $this->assertCount( 1, Trip::all() );
         $trip = Trip::first();
-        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip Started' ] ) );
+        echo json_encode( $response->json(), JSON_PRETTY_PRINT );
+        $response->assertJson( array_merge( $this->outputData( $trip ), [
+            'message'=> 'Trip Started',
+            'data'=>[
+                'total_tarrif'=>'0.00',
+                'ride_distance'=>'0.00',
+                'waiting_tarrif'=> '0.00',
+                'ride_speed'=> '0.00',
+                'total_waiting_time'=> '0.00'
+            ]
+        ] ) );
+
         $this->assertEquals( $user->active_trip_id, $trip->id );
     }
 
@@ -63,7 +74,6 @@ class TripTest extends TestCase {
         $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
         //echo $trip->toJson( JSON_PRETTY_PRINT );
         //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
-
     }
 
     public function test_a_trip_can_be_ended(): void {
@@ -98,7 +108,38 @@ class TripTest extends TestCase {
         $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$trip->id, $this->inProgressData() );
         $trip = Trip::first();
         $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
+        //echo json_encode( $response->json(), JSON_PRETTY_PRINT );
+        //echo $trip->toJson( JSON_PRETTY_PRINT );
+    }
 
+    public function test_a_trip_can_be_very_long() {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+        ] );
+        $trip = Trip::factory()->create( [
+            'last_update_time'=> Carbon::now()->subSeconds( 3 ),
+            'user_id'=>$user->id,
+            'status'=>1,
+            'last_latitude' => 7.253195529141866,
+            'last_longitude'=>  80.34525528285577,
+            'total_waiting_time'=>  0.00,
+            'ride_distance'=>  0.00,
+        ] );
+        $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$trip->id, $this->getLocationMetersAway($trip->last_latitude,$trip->last_longitude,10) );
+        $trip = Trip::first();
+        $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
+
+        for ($i = 10; $i <= 10000; $i += 10) {
+            $trip = Trip::first();
+            $trip->update(['last_update_time'=> Carbon::now()->subSeconds( 3 )]);
+            $response = $this->actingAs( $user )->post( 'api/trips/inprogress/'.$trip->id, $this->getLocationMetersAway($trip->last_latitude,$trip->last_longitude,25) );
+            $trip = Trip::first();
+            $response->assertJson( array_merge( $this->outputData( $trip ), [ 'message'=> 'Trip In Progress' ] ) );
+
+        }
+       // echo json_encode( $response->json(), JSON_PRETTY_PRINT );
+       // echo $trip->toJson( JSON_PRETTY_PRINT );
     }
 
     public function data() {
@@ -119,6 +160,33 @@ class TripTest extends TestCase {
         //     'current_longitude'=>  80.34477382633004,
         // ];
     }
+
+    function getLocationMetersAway($latitude, $longitude, $distanceMeters) {
+        $earthRadius = 6371000; // Earth's radius in meters
+        $bearing = deg2rad(45); // Choose a bearing angle (45 degrees in this case)
+    
+        // Convert latitude and longitude from degrees to radians
+        $latRad = deg2rad($latitude);
+        $longRad = deg2rad($longitude);
+    
+        // Calculate the angular distance (in radians)
+        $angularDistance = $distanceMeters / $earthRadius;
+    
+        // Calculate new latitude
+        $newLat = asin(sin($latRad) * cos($angularDistance) +
+                       cos($latRad) * sin($angularDistance) * cos($bearing));
+    
+        // Calculate new longitude
+        $newLon = $longRad + atan2(sin($bearing) * sin($angularDistance) * cos($latRad),
+                                   cos($angularDistance) - sin($latRad) * sin($newLat));
+    
+        // Convert back from radians to degrees
+        $newLat = rad2deg($newLat);
+        $newLon = rad2deg($newLon);
+    
+        return ['current_latitude' => $newLat, 'current_longitude' => $newLon];
+    }
+
 
     public function outputData( $trip ) {
         return [
