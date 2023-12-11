@@ -19,4 +19,15 @@ class Tariff extends Model {
         }
         return $tarrif ;
     }
+
+    public function updateTariff( $data ) {
+        if ( $data->status == 1 ) {
+            DB::table( 'tariffs' )->where( 'id', '!=', $this->id )->update( [ 'status' => 0 ] );
+            $tarrif = $this->update( $data->all() ) ;
+        } else {
+            $data->offsetUnset( 'status' );
+            $tarrif = $this->update( $data->all() ) ;
+        }
+        return $this ;
+    }
 }

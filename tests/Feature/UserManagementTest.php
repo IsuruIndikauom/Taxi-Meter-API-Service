@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Laravel\Passport\Passport;
+use Laravel\Passport\Client;
+use Laravel\Passport\ClientRepository;
 
 class UserManagementTest extends TestCase {
     use RefreshDatabase;
@@ -15,8 +17,20 @@ class UserManagementTest extends TestCase {
     */
     protected function setUp(): void {
         parent::setUp();
+
+        // Install Passport for testing
         $this->artisan( 'passport:install' );
-        // $this->withoutExceptionHandling();
+
+        $clientRepository = new ClientRepository();
+        $client = $clientRepository->createPasswordGrantClient(
+            null, 'Test Password Client', 'http://localhost'
+        );
+
+        // Save client details for use in tests
+        $this->clientId = $client->id;
+        $this->clientSecret = $client->secret;
+
+        //$this->withoutExceptionHandling();
     }
 
     public function test_a_user_can_be_added_to_the_system(): void {
@@ -178,7 +192,91 @@ class UserManagementTest extends TestCase {
         $response->assertStatus( 401 );
     }
 
-    public function data() {
+    public function test_a_user_can_be_viewed():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>''
+        ] );
+        $response = $this->actingAs( $user )->get( 'api/users/'.$user->id );
+        $response->assertStatus( 200 )->assertJson( [ 'message'=> 'User details', 'data' => $user->toArray() ] );
+    }
+
+    public function test_a_user_cannot_be_viewed_if_id_invalid():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'id'=>1
+        ] );
+        $response = $this->actingAs( $user )->get( 'api/users/2' );
+        $response->assertStatus( 404 );
+    }
+
+    public function test_all_users_can_be_view():void {
+        $users = User::factory()->times( 10 )->create( [
+            'role_id' => 3,
+            'name'=>''
+        ] );
+        $response = $this->actingAs( $users->first() )->get( 'api/users' );
+        $response->assertStatus( 200 )->assertJson( [ 'message'=> 'All users', 'data' => $users->toArray() ] );
+    }
+
+    public function test_a_user_can_be_deleted():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>''
+        ] );
+        $response = $this->actingAs( $user )->delete( 'api/users/'.$user->id );
+        $response->assertStatus( 200 )->assertJson( [ 'message'=> 'User deleted' ] );
+        $this->assertCount( 0, User::all() );
+    }
+
+    public function test_a_user_cannot_be_deleted_for_invalid_id():void {
+        $user = User::factory()->create( [
+            'role_id' => 3,
+            'mobile_number' => '717196590',
+            'name'=>'',
+            'id'=>1
+        ] );
+        $response = $this->actingAs( $user )->delete( 'api/users/2' );
+        $response->assertStatus( 404 );
+        $this->assertCount( 1, User::all() );
+    }
+
+    public function test_a_user_can_login_with_email_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', $this->loginData() );
+
+        $response->assertStatus( 200 );
+        $token = $response->json( 'access_token' );
+    }
+
+    public function test_a_user_cannot_login_with_invalid_email_correct_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', array_merge( $this->loginData(), [ 'username'=>'testif@test.com' ] ) );
+        $response->assertStatus( 400 );
+    }
+
+    public function test_a_user_cannot_login_with_valid_email_invalid_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', array_merge( $this->loginData(), [ 'password'=>'123' ] ) );
+        $response->assertStatus( 400 );
+    }
+
+    public function data() :array {
         return [
             'name' => '',
             'mobile_number' => '717196590',
@@ -189,4 +287,14 @@ class UserManagementTest extends TestCase {
             'password' => bcrypt( 'password123' ),
         ];
     }
-}
+
+    public function loginData() :array {
+        return [
+            'grant_type' => 'password',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'username' => 'test@test.com',
+            'password' => 'password',
+            'scope' => '', ];
+        }
+    }
