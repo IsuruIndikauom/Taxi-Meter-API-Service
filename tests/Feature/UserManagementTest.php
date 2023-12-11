@@ -7,6 +7,8 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Laravel\Passport\Passport;
+use Laravel\Passport\Client;
+use Laravel\Passport\ClientRepository;
 
 class UserManagementTest extends TestCase {
     use RefreshDatabase;
@@ -15,7 +17,19 @@ class UserManagementTest extends TestCase {
     */
     protected function setUp(): void {
         parent::setUp();
+
+        // Install Passport for testing
         $this->artisan( 'passport:install' );
+
+        $clientRepository = new ClientRepository();
+        $client = $clientRepository->createPasswordGrantClient(
+            null, 'Test Password Client', 'http://localhost'
+        );
+
+        // Save client details for use in tests
+        $this->clientId = $client->id;
+        $this->clientSecret = $client->secret;
+
         //$this->withoutExceptionHandling();
     }
 
@@ -230,6 +244,38 @@ class UserManagementTest extends TestCase {
         $this->assertCount( 1, User::all() );
     }
 
+    public function test_a_user_can_login_with_email_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', $this->loginData() );
+
+        $response->assertStatus( 200 );
+        $token = $response->json( 'access_token' );
+    }
+
+    public function test_a_user_cannot_login_with_invalid_email_correct_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', array_merge( $this->loginData(), [ 'username'=>'testif@test.com' ] ) );
+        $response->assertStatus( 400 );
+    }
+
+    public function test_a_user_cannot_login_with_valid_email_invalid_password_admin():void {
+        $user = User::factory()->create( [
+            'role_id' => 1,
+            'id'=>1,
+            'email'=>'test@test.com'
+        ] );
+        $response = $this->post( 'oauth/token', array_merge( $this->loginData(), [ 'password'=>'123' ] ) );
+        $response->assertStatus( 400 );
+    }
+
     public function data() :array {
         return [
             'name' => '',
@@ -242,4 +288,13 @@ class UserManagementTest extends TestCase {
         ];
     }
 
-}
+    public function loginData() :array {
+        return [
+            'grant_type' => 'password',
+            'client_id' => $this->clientId,
+            'client_secret' => $this->clientSecret,
+            'username' => 'test@test.com',
+            'password' => 'password',
+            'scope' => '', ];
+        }
+    }
