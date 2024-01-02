@@ -17,12 +17,12 @@ return new class extends Migration
             $table->dateTime('start_time');
             $table->dateTime('end_time')->nullable();
             $table->dateTime('last_update_time');
-            $table->decimal('start_latitude', 18, 15);
-            $table->decimal('start_longitude', 18, 15);
+            $table->decimal('start_latitude', 18, 15)->nullable();
+            $table->decimal('start_longitude', 18, 15)->nullable();
             $table->decimal('end_latitude', 18, 15)->nullable();
-            $table->decimal('end_longitude',18, 15)->nullable();
-            $table->decimal('last_latitude', 18, 15);
-            $table->decimal('last_longitude', 18, 15);
+            $table->decimal('end_longitude', 18, 15)->nullable();
+            $table->decimal('last_latitude', 18, 15)->nullable();
+            $table->decimal('last_longitude', 18, 15)->nullable();
             $table->decimal('fix_rate', 10, 2);
             $table->decimal('rate_per_km', 10, 2);
             $table->decimal('rate_per_minute', 10, 2);
