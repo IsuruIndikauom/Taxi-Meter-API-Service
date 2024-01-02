@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-
+// At the top of your routes fill
 Route::resource('otps', OTPController::class);
 Route::post('otps/verify',[OTPController::class, 'verify']);
 Route::middleware('auth:api')->group(function () {
