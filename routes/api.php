@@ -23,6 +23,7 @@ Route::post('otps/verify', [OTPController::class, 'verify']);
 Route::middleware('auth:api')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('tariffs', TariffController::class);
+    Route::get('tariff/active', [TariffController::class, 'getActive']);
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('trips/start', [TripController::class, 'start']);
     Route::post('trips/inprogress/{trip}', [TripController::class, 'inProgress']);
