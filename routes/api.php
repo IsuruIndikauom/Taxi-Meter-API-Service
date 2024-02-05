@@ -23,10 +23,13 @@ Route::post('otps/verify', [OTPController::class, 'verify']);
 Route::middleware('auth:api')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('tariffs', TariffController::class);
+    Route::get('tariff/active', [TariffController::class, 'getActive']);
     Route::post('logout', [UserController::class, 'logout']);
     Route::post('trips/start', [TripController::class, 'start']);
     Route::post('trips/inprogress/{trip}', [TripController::class, 'inProgress']);
     Route::post('trips/end/{trip}', [TripController::class, 'end']);
+    Route::get('trips/all', [TripController::class, 'getAll']);
+    Route::get('trips/user/all', [TripController::class, 'getUserAll']);
     Route::prefix('v2')->group(function () {
         Route::post('trips/start', [TripController::class, 'startV2']);
         Route::post('trips/end/{trip}', [TripController::class, 'endV2']);

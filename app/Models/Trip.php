@@ -130,4 +130,14 @@ class Trip extends Model
         return $seconds;
     }
 
+    public function getAll()
+    {
+        return $this->all();
+    }
+
+    public function getUserAll($id)
+    {
+        return $this->where('user_id', $id)->get();
+    }
+
 }
