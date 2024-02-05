@@ -239,6 +239,29 @@ class TripTest extends TestCase
         $this->assertEquals($user->active_trip_id, null);
     }
 
+    public function test_all_trips_can_be_viewed(): void
+    {
+        $user = User::factory()->create([
+            'role_id' => 1,
+            'id' => 1,
+        ]);
+        Trip::factory()->count(10)->create();
+        $response = $this->actingAs($user)->get('api/trips/all');
+        $response->assertJsonCount(10, 'data');
+    }
+
+    public function test_all_trips_can_be_viewed_per_user(): void
+    {
+        $user = User::factory()->create([
+            'role_id' => 1,
+            'id' => 1,
+        ]);
+        Trip::factory()->count(10)->create();
+        $response = $this->actingAs($user)->get('api/trips/user/all');
+        $response->assertJsonCount(Trip::where('user_id', 1)->count(), 'data');
+        // echo json_encode($response->json(), JSON_PRETTY_PRINT);
+    }
+
     public function outputData($trip)
     {
         return [

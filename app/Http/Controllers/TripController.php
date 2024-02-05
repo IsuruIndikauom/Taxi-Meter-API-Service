@@ -89,4 +89,15 @@ class TripController extends Controller
             return $this->badRequest('Active trip does not exists');
         }
     }
+
+    public function getAll(Trip $trip)
+    {
+        return $this->success('All Trips', $trip->getAll());
+    }
+
+    public function getUserAll(Trip $trip)
+    {
+        $user = Auth::User();
+        return $this->success('Current User All Trips', $trip->getUserAll($user->id));
+    }
 }
