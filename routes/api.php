@@ -32,6 +32,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('trips/all', [TripController::class, 'getAll']);
     Route::get('trips/user/all', [TripController::class, 'getUserAll']);
     Route::get('settings', [SettingController::class, 'get']);
+    Route::get('profiles', [UserController::class, 'getProfile']);
     Route::prefix('v2')->group(function () {
         Route::post('trips/start', [TripController::class, 'startV2']);
         Route::post('trips/end/{trip}', [TripController::class, 'endV2']);
