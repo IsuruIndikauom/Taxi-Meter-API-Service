@@ -256,10 +256,19 @@ class TripTest extends TestCase
             'role_id' => 1,
             'id' => 1,
         ]);
-        Trip::factory()->count(10)->create();
+        Trip::factory()->count(200)->create();
         $response = $this->actingAs($user)->get('api/trips/user/all');
-        $response->assertJsonCount(Trip::where('user_id', 1)->count(), 'data');
-        // echo json_encode($response->json(), JSON_PRETTY_PRINT);
+        $expectedTotalCount = Trip::where('user_id', 1)->count();
+        $actualTotalCount = $response['data']['total'];
+        $this->assertEquals($expectedTotalCount, $actualTotalCount, "The total count of items does not match the expected value.");
+        if ($actualTotalCount < 10) {
+            $expectedPerPage = $actualTotalCount;
+        } else {
+            $expectedPerPage = 10;
+        }
+        $actualPerPage = count($response['data']['data']);
+        $this->assertEquals($expectedPerPage, $actualPerPage, "The count of items in the first page does not match the expected value.");
+        //echo json_encode($response->json(), JSON_PRETTY_PRINT);
     }
 
     public function outputData($trip)
