@@ -37,7 +37,7 @@ class TripFactory extends Factory
             'ride_distance' => 0.00,
             'ride_speed' => 0.00,
             'total_waiting_time' => 0,
-            'user_id' => rand(1, 9),
+            'user_id' => rand(1, 5),
             'status' => 1,
         ];
         //  'last_update_time' => Carbon::now(), ->subSeconds( 10 ) ->subHours( 1 )

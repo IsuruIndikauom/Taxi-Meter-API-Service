@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\OTPController;
+use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TariffController;
 use App\Http\Controllers\TripController;
 use App\Http\Controllers\UserController;
@@ -30,6 +31,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('trips/end/{trip}', [TripController::class, 'end']);
     Route::get('trips/all', [TripController::class, 'getAll']);
     Route::get('trips/user/all', [TripController::class, 'getUserAll']);
+    Route::get('settings', [SettingController::class, 'get']);
+    Route::get('profiles', [UserController::class, 'getProfile']);
     Route::prefix('v2')->group(function () {
         Route::post('trips/start', [TripController::class, 'startV2']);
         Route::post('trips/end/{trip}', [TripController::class, 'endV2']);
