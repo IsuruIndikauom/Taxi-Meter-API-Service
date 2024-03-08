@@ -97,7 +97,8 @@ class TripController extends Controller
 
     public function getUserAll(Trip $trip)
     {
+        $perPage = 10;
         $user = Auth::User();
-        return $this->success('Current User All Trips', $trip->getUserAll($user->id));
+        return $this->success('Current User All Trips with paginaton', $trip->getUserAll($user->id, $perPage));
     }
 }
