@@ -135,9 +135,9 @@ class Trip extends Model
         return $this->all();
     }
 
-    public function getUserAll($id)
+    public function getUserAll($id, $perPage = 10)
     {
-        return $this->where('user_id', $id)->get();
+        return $this->where('user_id', $id)->paginate($perPage);
     }
 
 }
